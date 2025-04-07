@@ -77,3 +77,43 @@ urllib3                      2.3.0
 Werkzeug                     3.1.3
 wheel                        0.45.1
 wrapt                        1.17.2
+
+
+# Tensorflow model
+
+
+## ¿Qué es "shape" en un tensor?
+
+En el mundo del aprendizaje automático y el procesamiento de datos, los tensores son estructuras de datos multidimensionales. La "forma" (shape) de un tensor define las dimensiones y el tamaño de cada dimensión. En otras palabras, "shape" te dice cuántos elementos hay en cada eje del tensor.
+
+### Desglose de shape=[1, 256, 256, 3]:
+
+- **1 (Dimensión 0 - Lote o "batch")**: 
+  El primer número indica que este tensor representa un solo "lote" o una sola muestra. En el procesamiento de imágenes, a menudo se trabaja con lotes de imágenes para el entrenamiento de modelos. Esta dimensión permite procesar múltiples imágenes simultáneamente. En este caso, "1" significa que estamos procesando una sola imagen.
+
+- **256 (Dimensión 1 - Altura)**:
+  El segundo número indica la altura de la imagen en píxeles. Esto significa que la imagen tiene 256 píxeles de alto.
+
+- **256 (Dimensión 2 - Anchura)**:
+  El tercer número indica la anchura de la imagen en píxeles. Esto significa que la imagen tiene 256 píxeles de ancho.
+
+- **3 (Dimensión 3 - Canales de color)**:
+  El cuarto número indica el número de canales de color. En el caso de imágenes RGB (Rojo, Verde, Azul), hay tres canales. Por lo tanto, cada píxel está representado por tres valores que indican la intensidad de cada color primario.
+
+
+NodeArg(name='input', type='tensor(int32)', shape=[1, 256, 256, 3])
+15 puntos con x,y,score (el score deberia se ser > 0.3)
+NodeArg(name='output_0', type='tensor(float)', shape=[1, 1, 17, 3])
+
+# Tiempos de inferencia
+
+Inference time: 0.0317 seconds
+Inference time: 0.0327 seconds
+Inference time: 0.0287 seconds
+Inference time: 0.0286 seconds
+Inference time: 0.0301 seconds
+Inference time: 0.0282 seconds
+Inference time: 0.0289 seconds
+Inference time: 0.0324 seconds
+
+

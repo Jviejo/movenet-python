@@ -21,7 +21,7 @@ while True:
         print("Failed to grab frame")
         break
     
-    # Resize frame to match model input size (256x256)
+    # El modelo thunder necesita imagenes de 256x256
     img = cv2.resize(frame, (256, 256))
     
     # Ensure image has 3 channels (RGB)
@@ -31,13 +31,19 @@ while True:
     # This is needed for ONNX model input format
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
+
+    # el modelo necesita un que los valore de int32
     imatge_array = np.array(img, dtype=np.int32)
+    
+    # Añade una dimensión extra al principio del array para representar el batch size (1)
+    # Convierte la imagen de forma [256, 256, 3] a [1, 256, 256, 3] para cumplir con el formato
+    # de entrada que espera el modelo (batch, height, width, channels)
     tensor_imatge = np.expand_dims(imatge_array, axis=0)
     
     # Prepare the input for the ONNX model
 
     inputs = {onnxnet.get_inputs()[0].name: tensor_imatge}
-    
+
     
     # # Run inference
     
@@ -116,8 +122,3 @@ while True:
 # Release resources when done
 cap.release()
 cv2.destroyAllWindows()     
-
-
-# input_tensor = np.random.rand(1,3,256,256).astype(np.float32)
-# output = onnxnet.run([], {input_name: input_tensor})
-# print(output)
