@@ -2,6 +2,8 @@
 import onnxruntime as rt
 import cv2
 import numpy as np
+import time
+
 onnxnet = rt.InferenceSession('singlepose-thunder.onnx')
 input_detail = onnxnet.get_inputs()
 output_detail = onnxnet.get_outputs()
@@ -36,8 +38,13 @@ while True:
 
     inputs = {onnxnet.get_inputs()[0].name: tensor_imatge}
     
+    
     # # Run inference
+    
+    start_time = time.time()
     outputs = onnxnet.run(None, inputs)
+    inference_time = time.time() - start_time
+    print(f"Inference time: {inference_time:.4f} seconds")
 
     # Process the output to get keypoints
     keypoints = outputs[0][0][0]  # Shape: [17, 3] - 17 keypoints with [y, x, confidence]
