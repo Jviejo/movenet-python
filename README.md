@@ -1,19 +1,32 @@
 # create virtual environment
-
 ```
 python3.11 -m venv ~/py311_env  && source ~/py311_env/bin/activate
 ```
 
+
+
+
 # install dependencies
 
 ```
-pip install --upgrade pip      
-pip install tensorflow==2.12.0
-pip install tf2onnx
-pip install opencv-python
-pip install onnxruntime-silicon
-pip install onnxruntime   
-pip install numpy==1.26.4     
+pip install kagglehub
+pip install --upgrade pip       # para que funcione pip. No haria falta.
+pip install tensorflow==2.12.0  # para ejecutar el modelo tensorflow
+pip install tf2onnx             # para convertir el modelo tensorflow a onnx
+pip install opencv-python       # para leer las imagenes
+pip install onnxruntime         # para ejecutar el modelo onnx
+pip install onnxruntime-silicon # para apple silicon
+pip install numpy==1.26.4       # para que funcione el modelo thunder. No va con la 2
+```
+
+# Descargar los modelos en formato saved_model de tensorflow
+
+```python
+mport kagglehub
+# Download latest version
+kagglehub.model_download("google/movenet/tensorFlow2/multipose-lightning")
+kagglehub.model_download("google/movenet/tensorFlow2/singlepose-lightning")
+kagglehub.model_download("google/movenet/tensorFlow2/singlepose-thunder")
 ```
 
 # Convert tensorflow model to onnx
@@ -29,6 +42,7 @@ python -m tf2onnx.convert \
 
 Package                      Version
 ---------------------------- ---------
+kagglehub                    0.2.1
 absl-py                      2.2.2
 astunparse                   1.6.3
 certifi                      2025.1.31
@@ -81,7 +95,6 @@ wrapt                        1.17.2
 
 # Tensorflow model
 
-
 ## ¿Qué es "shape" en un tensor?
 
 En el mundo del aprendizaje automático y el procesamiento de datos, los tensores son estructuras de datos multidimensionales. La "forma" (shape) de un tensor define las dimensiones y el tamaño de cada dimensión. En otras palabras, "shape" te dice cuántos elementos hay en cada eje del tensor.
@@ -101,9 +114,29 @@ En el mundo del aprendizaje automático y el procesamiento de datos, los tensore
   El cuarto número indica el número de canales de color. En el caso de imágenes RGB (Rojo, Verde, Azul), hay tres canales. Por lo tanto, cada píxel está representado por tres valores que indican la intensidad de cada color primario.
 
 
-NodeArg(name='input', type='tensor(int32)', shape=[1, 256, 256, 3])
-15 puntos con x,y,score (el score deberia se ser > 0.3)
-NodeArg(name='output_0', type='tensor(float)', shape=[1, 1, 17, 3])
+NodeArg(name='input', type='tensor(int32)', shape=[1, 256, 256, 3]) // una image de 256x256 con 3 channel
+
+
+### Desglose de shape=[1, 1, 17, 3]:
+
+- **1 (Dimensión 0 - Lote o "batch")**: 
+  Representa el tamaño del lote. En este caso, es 1, lo que significa que el modelo está procesando un solo ejemplo a la vez.
+
+- **1 (Dimensión 1 - Personas detectadas)**:
+  Representa la cantidad de personas detectadas. Este modelo es capaz de detectar la pose de una sola persona, por lo cual, este valor es 1.
+
+- **17 (Dimensión 2 - Puntos clave)**:
+  Representa el número de puntos clave (keypoints) detectados por MoveNet. MoveNet detecta 17 puntos clave del cuerpo humano, como los ojos, la nariz, los hombros, los codos, etc.
+
+- **3 (Dimensión 3 - Coordenadas y confianza)**:
+  Representa las coordenadas (y, x) y la confianza (confidence) de cada punto clave:
+  - y: La coordenada vertical del punto clave.
+  - x: La coordenada horizontal del punto clave.
+  - confidence: La confianza del modelo en la precisión de la detección del punto clave.
+
+
+17 puntos con x,y,score (el score deberia se ser > 0.3)
+NodeArg(name='output_0', type='tensor(float)', shape=[1, 1, 17, 3]) // 
 
 # Tiempos de inferencia
 
